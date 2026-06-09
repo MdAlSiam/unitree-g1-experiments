@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+*.so
+
+.venv/
+venv/
+env/
+.roboenv/
+
+.vscode/
+.idea/
+
+debug.jpg
