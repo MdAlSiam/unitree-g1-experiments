@@ -13,6 +13,7 @@ from experiment.video import open_video_capture
 
 
 def build_detector(name: str, config: ExperimentConfig):
+    """Create the configured detector implementation by name."""
     if name == "yolo_face":
         return YoloFaceDetector(
             model_path=config.model_path,
@@ -23,6 +24,7 @@ def build_detector(name: str, config: ExperimentConfig):
 
 
 def build_scenario(name: str, config: ExperimentConfig):
+    """Create the configured scenario implementation by name."""
     if name == "welcome_wave":
         return WelcomeWaveScenario(
             pause_seconds=config.welcome_pause_seconds,
@@ -34,6 +36,7 @@ def build_scenario(name: str, config: ExperimentConfig):
 
 
 def run_experiment(config: ExperimentConfig, detector_name: str, scenario_name: str) -> None:
+    """Run the main camera, detection, and robot-action loop."""
     print(f"Using network interface: {config.network_interface}")
     clients = initialize_robot_clients(config.network_interface)
 
@@ -108,6 +111,7 @@ def run_experiment(config: ExperimentConfig, detector_name: str, scenario_name: 
 
 
 def run_from_cli() -> None:
+    """Parse CLI arguments and start the experiment loop."""
     parser = argparse.ArgumentParser(description="Run the Unitree G1 experiment loop")
     parser.add_argument(
         "network_interface",

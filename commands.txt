@@ -1,0 +1,139 @@
+CHATGPT ON FIREFOX
+========================================================
+
+# create virtual environment
+sudo apt install python3.12-venv
+python3 -m venv .roboev
+source .roboev/bin/activate
+
+# Install from source (https://github.com/Unitreerobotics/unitree_sdk2_python)
+cd ~
+sudo apt install python3-pip
+git clone https://github.com/unitreerobotics/unitree_sdk2_python.git
+cd unitree_sdk2_python
+pip3 install -e .
+
+# Troubleshoot
+# Error: Could not locate cyclonedds. Try to set CYCLONEDDS_HOME or CMAKE_PREFIX_PATH
+cd ~
+git clone https://github.com/eclipse-cyclonedds/cyclonedds -b releases/0.10.x 
+cd cyclonedds && mkdir build inpython3 ./example/helloworld/publisher.pystall && cd build
+cmake .. -DCMAKE_INSTALL_PREFIX=../install
+cmake --build . --target install
+
+cd ~/unitree_sdk2_python
+# cd ../.. to go
+export CYCLONEDDS_HOME=~/cyclonedds/install
+pip3 install -e .
+
+# or (chatGPT fix)
+
+export CYCLONEDDS_HOME=$PWD/cyclonedds/install
+export CMAKE_PREFIX_PATH=$CYCLONEDDS_HOME
+echo $CYCLONEDDS_HOME
+# Output: /home/robotics-lab/Desktop/robot-watch/unitree_sdk2_python/cyclonedds/install
+find $CYCLONEDDS_HOME -name CycloneDDSConfig.cmake
+# Output: /home/robotics-lab/Desktop/robot-watch/unitree_sdk2_python/cyclonedds/install/lib/cmake/CycloneDDS/CycloneDDSConfig.cmake
+sudo apt install python3-pip
+pip3 install -e .
+
+# DDS Communication
+python3 ./example/helloworld/publisher.py
+# Open a new terminal (activate virtual environment) and execute:
+python3 ./example/helloworld/subscriber.py
+# You will see the data output in the terminal. 
+# The data structure transmitted between publisher.py and subscriber.py is defined in user_data.py, 
+# and users can define the required data structure as needed.
+
+python3 ./example/h1/high_level/read_highstate.py enp2s0 
+# Replace enp2s0 with the name of the network interface to which the robot is connected
+# The program will output the state of the right front leg hip joint, IMU, and battery voltage.
+# (Check) This example program (sportmode_test.py) provides several test methods, and you can choose the required tests as follows:
+test.StandUpDown() # Stand up and lie down
+# test.VelocityMove() # Velocity control
+# test.BalanceAttitude() # Attitude control
+# test.TrajectoryFollow() # Trajectory tracking
+# test.SpecialMotions() # Special motions
+
+# IP Link
+ip link show
+# enp2s0, enp3s0, eno1 → wired Ethernet | wlp3s0, wlan0 → Wi-Fi | enx... → USB Ethernet adapter
+
+# Audio Test
+python3 ./example/g1/audio/g1_audio_client_example.py enp130s0
+
+# Quick Run once set up
+robotics-lab@robotics-lab-OMEN-by-HP-45L-Gaming-Desktop-GT22-3xxx:~/Desktop/robot-watch$ source .roboev/bin/activate
+ip link show
+python3 unitree_sdk2_python/example/g1/audio/g1_audio_client_example.py enp130s0
+
+# Video test
+gst-launch-1.0 udpsrc address=230.1.1.1 port=1720 multicast-iface=enp130s0 ! application/x-rtp,media=video,encoding-name=H264 ! rtph264depay ! h264parse ! avdec_h264 ! videoconvert ! autovideosink
+
+
+# --- --- --- --- --- --- 
+
+# WILL SKIP
+
+# Low-Level Motor Control
+# (IMPORTANT) First, use the app to turn off the high-level motion service (sport_mode) to prevent conflicting instructions. 
+python3 ./example/low_level/lowlevel_control.py enp2s0
+
+# --- --- --- --- --- --- 
+
+# Check available devices on the network when the robot is connected
+
+python3 -c "
+import pyrealsense2 as rs
+ctx = rs.context()
+print('Devices:', len(ctx.devices))
+for d in ctx.devices:
+    print(d.get_info(rs.camera_info.name))
+"
+# Expected: 
+Devices: 1
+Intel RealSense D435
+
+python3 -c "import pyrealsense2 as rs; print(len(rs.context().devices))"
+
+
+
+# Front Camera
+python3 ./example/front_camera/camera_opencv.py enp2s0
+
+# VISION >> RESOURCE 2: https://github.com/Unitreerobotics/unitree_sdk2_python/issues/106
+
+sudo apt-get install ros-$ROS_DISTRO-realsense2-camera
+sudo apt-get install ros-$ROS_DISTRO-realsense2-description
+
+# Try NOW
+python3 ./example/front_camera/camera_opencv.py enp2s0
+
+# Try this TOO
+ssh -X unitree@192.168.123.164
+pip install pyrealsense2 opencv-python
+# Note: If you get an error, it might be that the date is wrong on your g1, might need to set it to the current date
+sudo date -s "2026-05-11 16:38:00"
+python view_g1_cam.py
+
+
+
+# SEE:
+(NOW) https://github.com/Robotics-Ark/ark_unitree_g1/tree/main
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -38,6 +38,31 @@ You can also pass the detector and scenario explicitly:
 PYTHONPATH=/usr/lib/python3/dist-packages python3 main.py enp130s0 --detector yolo_face --scenario welcome_wave
 ```
 
+## Workflow
+
+The program follows the same path every time you start it from `main.py`:
+
+1. `main.py` imports `run_from_cli()` from `experiment/runner.py` and calls it.
+2. `run_from_cli()` reads the command-line arguments and builds an `ExperimentConfig`.
+3. `run_experiment()` uses that config to initialize the robot SDK clients in `experiment/clients.py`.
+4. The selected scenario is created and started. For the default `welcome_wave` scenario, the robot speaks a short welcome sequence before the main loop begins.
+5. The video stream is opened with the GStreamer pipeline from the config.
+6. Each loop iteration reads one frame, runs the detector, and gets a list of detections back.
+7. The frame is annotated and saved as `debug.jpg` so you can inspect what the detector saw.
+8. The scenario consumes the detections and decides whether to trigger robot behavior, such as `ShakeHand()` and audio prompts.
+
+In short, the flow is:
+
+`CLI -> config -> robot clients -> scenario start -> camera frame -> detector -> scenario decision -> robot action`
+
+### Component Roles
+
+- `experiment/runner.py` owns the top-level loop.
+- `experiment/clients.py` connects to the Unitree SDK clients.
+- `experiment/video.py` opens the camera stream.
+- `experiment/detectors/` converts frames into detections.
+- `experiment/scenarios/` decides what the robot should do after detections arrive.
+
 ## What it does
 
 - Connects to the robot SDK

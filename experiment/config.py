@@ -25,6 +25,7 @@ class ExperimentConfig:
     output_path: str = "debug.jpg"
 
     def gst_pipeline(self) -> str:
+        """Build the GStreamer pipeline string for the configured network interface."""
         return DEFAULT_GST_PIPELINE_TEMPLATE.format(
             network_interface=self.network_interface
         )

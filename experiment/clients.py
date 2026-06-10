@@ -12,6 +12,7 @@ class RobotClients:
 
 
 def initialize_robot_clients(network_interface: str) -> RobotClients:
+    """Initialize the Unitree SDK channel and return ready-to-use robot clients."""
     ChannelFactoryInitialize(0, network_interface)
 
     audio_client = AudioClient()

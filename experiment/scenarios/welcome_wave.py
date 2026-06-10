@@ -15,6 +15,7 @@ class WelcomeWaveScenario:
     consecutive_detection_frames: int = field(default=0, init=False)
 
     def start(self, clients: RobotClients) -> None:
+        """Store the robot clients and play the welcome audio sequence."""
         self.clients = clients
         self.clients.audio_client.TtsMaker("Welcome to tuskeegi University.", 1)
         time.sleep(self.pause_seconds)
@@ -24,6 +25,7 @@ class WelcomeWaveScenario:
         time.sleep(self.pause_seconds)
 
     def handle_detections(self, detections: list[Detection]) -> None:
+        """Confirm repeated detections, then trigger the robot response."""
         if not detections or self.clients is None:
             self.consecutive_detection_frames = 0
             return

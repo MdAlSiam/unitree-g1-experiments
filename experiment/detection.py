@@ -13,6 +13,7 @@ class Detection:
 
 
 def annotate_frame(frame, detections: list[Detection]):
+    """Draw detection bounding boxes on the provided frame and return it."""
     for detection in detections:
         cv2.rectangle(
             frame,

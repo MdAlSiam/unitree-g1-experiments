@@ -6,6 +6,7 @@ from experiment.detection import Detection
 
 class YoloFaceDetector:
     def __init__(self, model_path: str, confidence_threshold: float) -> None:
+        """Load the YOLO model and prepare it for face detection."""
         self.confidence_threshold = confidence_threshold
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         # self.device = "cpu"
@@ -14,6 +15,7 @@ class YoloFaceDetector:
         self.model.to(self.device)
 
     def detect(self, frame) -> list[Detection]:
+        """Run the YOLO model on a frame and keep high-confidence person detections."""
         results = self.model(frame, device=self.device, verbose=False)[0]
         detections: list[Detection] = []
 
