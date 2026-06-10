@@ -16,11 +16,11 @@ class WelcomeWaveScenario:
 
     def start(self, clients: RobotClients) -> None:
         self.clients = clients
-        self.clients.audio_client.TtsMaker("Welcome to tuskeegi University", 1)
+        self.clients.audio_client.TtsMaker("Welcome to tuskeegi University.", 1)
         time.sleep(self.pause_seconds)
         self.clients.audio_client.TtsMaker("Greeeting, President Doctor Brown.", 1)
         time.sleep(self.pause_seconds)
-        self.clients.audio_client.TtsMaker("Thank you for your support", 1)
+        self.clients.audio_client.TtsMaker("Thank you for your support.", 1)
         time.sleep(self.pause_seconds)
 
     def handle_detections(self, detections: list[Detection]) -> None:
@@ -36,19 +36,19 @@ class WelcomeWaveScenario:
         if (current_time - self.last_alert_time) <= self.alert_interval_seconds:
             return
 
-        print(f"Face detected ({len(detections)}), confidences: {[d.confidence for d in detections]} - attempting WaveHand")
+        print(f"Face detected ({len(detections)}), confidences: {[d.confidence for d in detections]} - attempting ShakeHand")
         try:
             # result = self.clients.loco_client.WaveHand()
             result = self.clients.loco_client.ShakeHand()
-            print(f"WaveHand result: {result}")
+            print(f"ShakeHand result: {result}")
         except Exception as e:
-            print(f"WaveHand call failed: {e}")
+            print(f"ShakeHand call failed: {e}")
             import traceback
 
             traceback.print_exc()
 
         try:
-            self.clients.audio_client.TtsMaker(f"{len(detections)} humans detected", 1)
+            self.clients.audio_client.TtsMaker(f"{len(detections)} human detected" if len(detections) == 1 else f"{len(detections)} humans detected", 1)
         except Exception as e:
             print(f"TtsMaker failed: {e}")
 

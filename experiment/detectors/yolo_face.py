@@ -8,7 +8,8 @@ class YoloFaceDetector:
     def __init__(self, model_path: str, confidence_threshold: float) -> None:
         self.confidence_threshold = confidence_threshold
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        print(f"Using device: {self.device}")
+        # self.device = "cpu"
+        print(f">>> >>> Using device: {self.device}")
         self.model = YOLO(model_path)
         self.model.to(self.device)
 

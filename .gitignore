@@ -11,3 +11,5 @@ env/
 .idea/
 
 debug.jpg
+
+yolov8n.pt
